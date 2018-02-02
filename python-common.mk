@@ -1,3 +1,5 @@
+RPM_SPEC      := python-$(NAME).spec
+
 test_dependencies:
 	test_deps="$(TEST_DEPS)";                               \
 	if rpm --version && yum --version &&                    \

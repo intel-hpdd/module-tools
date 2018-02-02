@@ -1,6 +1,6 @@
 BUILD_METHOD := PyPI
-include include/rpm-common.mk
 include include/python-common.mk
+include include/rpm-common.mk
 include include/copr.mk
 
 # don't rebuild if tracked by git since this has to be manually
