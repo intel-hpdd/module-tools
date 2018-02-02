@@ -1,6 +1,6 @@
 include include/git-versioning.mk
-include include/rpm-common.mk
 include include/python-common.mk
+include include/rpm-common.mk
 include include/copr.mk
 
 %.egg-info/SOURCES.txt:

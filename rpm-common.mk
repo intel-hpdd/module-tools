@@ -1,4 +1,4 @@
-RPM_SPEC      := python-$(NAME).spec
+RPM_SPEC      ?= $(NAME).spec
 
 ifndef DIST_VERSION
 DIST_VERSION	     := $(PACKAGE_VERSION)
@@ -17,9 +17,11 @@ TARGET_RPMS   := $(addprefix _topdir/RPMS/noarch/python-,  \
                    $(addsuffix -$(PACKAGE_VRD).noarch.rpm, \
                      $(ALL_PKGS)))
 
-RPM_SOURCES   := $(shell spectool --define version\ $(PACKAGE_VERSION) \
-		                  $(RPM_DIST_VERSION_ARG)              \
-		                  -l $(RPM_SPEC) | sed -e 's/.*\///')
+RPM_SOURCES   := $(shell spectool --define version\ $(PACKAGE_VERSION)   \
+		                  $(RPM_DIST_VERSION_ARG)                \
+		                  --define "epel 1"                      \
+		                  -l $(RPM_SPEC) |                       \
+				  sed -e 's/^[^:]*:  *//' -e 's/.*\///')
 
 MODULE_SUBDIR ?= $(subst -,_,$(NAME))
 
@@ -32,6 +34,7 @@ RPMBUILD_ARGS += $(RPM_DIST_VERSION_ARG)                       \
 		 --define "_topdir $$(pwd)/_topdir"            \
 		 --define "version $(PACKAGE_VERSION)"         \
 		 --define "package_release $(PACKAGE_RELEASE)" \
+		 --define "epel 1"                             \
 		 --define "%dist $(RPM_DIST)"
 
 TARGET_SRPM   := _topdir/SRPMS/$(shell rpm $(RPMBUILD_ARGS) -q             \
@@ -65,6 +68,7 @@ _topdir/SOURCES/%: %
 
 $(RPM_SOURCES):
 	if ! spectool $(RPM_DIST_VERSION_ARG)                  \
+		   --define "epel 1"                           \
 		   -g $(RPM_SPEC); then                        \
 	    echo "Failed to fetch $@.";                        \
 	    exit 1;                                            \
