@@ -3,6 +3,21 @@ include include/python-common.mk
 include include/rpm-common.mk
 include include/copr.mk
 
+ifeq ($(strip $(VERSION)),)
+VERSION         := $(shell set -x; PYTHONPATH=chroma_agent python -c \
+		     "import scm_version; print scm_version.VERSION")
+endif
+
+ifeq ($(strip $(PACKAGE_VERSION)),)
+PACKAGE_VERSION := $(shell set -x; PYTHONPATH=chroma_agent python -c \
+		     "import scm_version; print scm_version.PACKAGE_VERSION")
+endif
+
+# should always remove the sources if DIST_VERSION was set
+ifneq ($(DIST_VERSION),$(PACKAGE_VERSION))
+    $(shell rm -f $(RPM_SOURCES))
+endif
+
 %.egg-info/SOURCES.txt:
 	python setup.py egg_info
 

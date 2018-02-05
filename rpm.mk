@@ -1,4 +1,5 @@
 include include/rpm-common.mk
+include include/copr.mk
 
 VERSION_RELEASE := $(shell repoquery -q --qf "%{version}-%{release}" $(NAME) | sed -e 's/.el7//g')
 SRPM            := $(NAME)-$(VERSION_RELEASE).el7.src.rpm
