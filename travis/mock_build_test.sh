@@ -1,6 +1,7 @@
 #!/bin/bash -xe
 
-MAPPED_DIR="/foo"
+# allow caller to override MAPPED_DIR, but default if they don't
+MAPPED_DIR="${MAPPED_DIR:-/build}"
 
 echo 'travis_fold:start:yum'
 yum -y install git mock rpm-build ed sudo make rpmdevtools python-setuptools

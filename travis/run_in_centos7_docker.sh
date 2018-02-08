@@ -1,6 +1,7 @@
 #!/bin/sh -xe
 
-MAPPED_DIR=/foo
+# allow caller to override MAPPED_DIR, but default if they don't
+MAPPED_DIR="${MAPPED_DIR:-/build}"
 
 # pass the Travis environment into (a file in the) docker environment
 env > travis_env
