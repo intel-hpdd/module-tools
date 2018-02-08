@@ -25,11 +25,6 @@ RPM_SOURCES   := $(shell spectool --define version\ $(PACKAGE_VERSION)   \
 
 MODULE_SUBDIR ?= $(subst -,_,$(NAME))
 
-# should always remove the sources if DIST_VERSION was set
-ifneq ($(DIST_VERSION),$(PACKAGE_VERSION))
-    $(shell rm -f $(RPM_SOURCES))
-endif
-
 RPMBUILD_ARGS += $(RPM_DIST_VERSION_ARG)                       \
 		 --define "_topdir $$(pwd)/_topdir"            \
 		 --define "version $(PACKAGE_VERSION)"         \
@@ -96,9 +91,11 @@ $(subst rpm,%,$(TARGET_RPMS)): \
 	echo "jenkins_fold:end:Make Agent RPMS"
 
 build_test: $(TARGET_SRPM)
+	$${TRAVIS:-false} && echo "travis_fold:start:mock" || true
 	mock $(RPM_DIST_VERSION_ARG)                   \
 	     -D version\ $(PACKAGE_VERSION)            \
 	     -D package_release\ $(PACKAGE_RELEASE) $<
+	$${TRAVIS:-false} && echo "travis_fold:end:mock" || true
 
 # it's not clear yet that we need/want this
 #rpm_deps: $(RPM_SPEC)

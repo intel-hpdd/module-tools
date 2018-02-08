@@ -47,6 +47,8 @@ else
 	BUILD_NUMBER := $(JENKINS_BUILD_TAG)
 endif
 
+# only overwrite scm_version.py if we have info from git
+ifneq ($(strip $(PACKAGE_VERSION)),)
 $(shell { echo 'VERSION = "$(VERSION)"';                                    \
 	  echo 'PACKAGE_VERSION = "$(PACKAGE_VERSION)"';                    \
 	  echo 'BUILD = "$(BUILD_NUMBER)"';                                 \
@@ -55,3 +57,4 @@ $(shell { echo 'VERSION = "$(VERSION)"';                                    \
 	  if ! cmp scm_version.py.tmp $(MODULE_SUBDIR)/scm_version.py; then \
 	      cp scm_version.py.tmp $(MODULE_SUBDIR)/scm_version.py;        \
 	  fi)
+endif

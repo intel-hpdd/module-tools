@@ -1,5 +1,5 @@
 ifneq ($(filter iml_%,$(MAKECMDGOALS)),)
-  COPR_CONFIG := --config ~/.config/copr-mfl
+  COPR_CONFIG := --config include/copr-mfl
   OWNER_PROJECT = managerforlustre/manager-for-lustre
 else
   # local settings
@@ -26,12 +26,10 @@ copr_build iml_copr_build: $(RPM_SPEC)
 	#$(COPR_OWNER)/$(COPR_PROJECT)
 	copr-cli $(COPR_CONFIG) build $(OWNER_PROJECT) $^
 else
-copr_build iml_copr_build:
-	copr-cli $(COPR_CONFIG) buildscm --clone-url                  \
-			    https://github.com/intel-hpdd/$(NAME).git \
-	                  --commit build-rpms                         \
-		          --method make_srpm                          \
-	                  $(OWNER_PROJECT) $<
+copr_build iml_copr_build: $(RPM_SPEC)
+	copr-cli $(COPR_CONFIG) buildmock $(OWNER_PROJECT)       \
+		 --scm-type git                                  \
+		 --scm-url https://github.com/intel-hpdd/$(NAME)
 endif
 
 .PHONY: copr_build iml_copr_build
