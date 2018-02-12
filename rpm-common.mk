@@ -25,14 +25,15 @@ RPM_SOURCES   := $(shell spectool --define version\ $(PACKAGE_VERSION)   \
 
 MODULE_SUBDIR ?= $(subst -,_,$(NAME))
 
-RPMBUILD_ARGS += $(RPM_DIST_VERSION_ARG)                       \
-		 --define "_topdir $$(pwd)/_topdir"            \
-		 --define "version $(PACKAGE_VERSION)"         \
-		 --define "package_release $(PACKAGE_RELEASE)" \
-		 --define "epel 1"                             \
-		 --define "%dist $(RPM_DIST)"
+COMMON_RPMBUILD_ARGS += $(RPM_DIST_VERSION_ARG)                       \
+			--define "version $(PACKAGE_VERSION)"         \
+			--define "package_release $(PACKAGE_RELEASE)" \
+			--define "epel 1"                             \
+			--define "%dist $(RPM_DIST)"
 
-TARGET_SRPM   := _topdir/SRPMS/$(shell rpm $(RPMBUILD_ARGS) -q             \
+RPMBUILD_ARGS += $(COMMON_RPMBUILD_ARGS) --define "_topdir $$(pwd)/_topdir" 
+
+TARGET_SRPM   := _topdir/SRPMS/$(shell set -x; rpm $(RPMBUILD_ARGS) -q             \
 				 --qf %{name}-%{version}-%{release}\\n     \
 				 --specfile $(RPM_SPEC) | head -1).src.rpm
 
@@ -92,9 +93,7 @@ $(subst rpm,%,$(TARGET_RPMS)): \
 
 build_test: $(TARGET_SRPM)
 	$${TRAVIS:-false} && echo "travis_fold:start:mock" || true
-	mock $(RPM_DIST_VERSION_ARG)                   \
-	     -D version\ $(PACKAGE_VERSION)            \
-	     -D package_release\ $(PACKAGE_RELEASE) $<
+	mock $(COMMON_RPMBUILD_ARGS) $<
 	$${TRAVIS:-false} && echo "travis_fold:end:mock" || true
 
 # it's not clear yet that we need/want this
