@@ -103,6 +103,9 @@ build_test: $(TARGET_SRPM)
 #
 #include rpm_deps
 
+rpmlint: $(RPM_SPEC)
+	rpmlint $<
+
 tags:
 	ctags -R .
 
@@ -110,7 +113,7 @@ clean: cleandist
 	rm -rf _topdir
 
 .PHONY: rpms srpm test test_dependencies build_test dist cleandist develop \
-	all clean genfiles setuphooks
+	all clean genfiles setuphooks rpmlint
 
 include include/githooks.mk
 
