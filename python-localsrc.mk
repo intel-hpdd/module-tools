@@ -1,7 +1,4 @@
 include include/git-versioning.mk
-include include/python-common.mk
-include include/rpm-common.mk
-include include/copr.mk
 
 ifeq ($(strip $(VERSION)),)
 VERSION         := $(shell set -x; PYTHONPATH=chroma_agent python -c \
@@ -12,6 +9,10 @@ ifeq ($(strip $(PACKAGE_VERSION)),)
 PACKAGE_VERSION := $(shell set -x; PYTHONPATH=chroma_agent python -c \
 		     "import scm_version; print scm_version.PACKAGE_VERSION")
 endif
+
+include include/python-common.mk
+include include/rpm-common.mk
+include include/copr.mk
 
 # should always remove the sources if DIST_VERSION was set
 ifneq ($(DIST_VERSION),$(PACKAGE_VERSION))
