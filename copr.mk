@@ -16,10 +16,16 @@ else
   OWNER_PROJECT = $(COPR_OWNER)/$(COPR_PROJECT)
 endif
 
+ifeq ($(shell grep -q ^%patch $(RPM_SPEC); echo $${PIPESTATUS[0]}),0)
+  PREREQ=$(TARGET_SRPM)
+else
+  PREREQ=$(RPM_SPEC)
+endif
+
 ifeq ($(BUILD_METHOD),PyPI)
 #copr_build:
 # https://pagure.io/copr/copr/issue/207
-copr_build iml_copr_build: $(RPM_SPEC)
+copr_build iml_copr_build: $(PREREQ)
 	# buildpypi is pretty useless right now:
 	# https://pagure.io/copr/copr/issue/207
 	#copr-cli buildpypi --packagename $(NAME)
