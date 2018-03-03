@@ -93,7 +93,7 @@ $(subst rpm,%,$(TARGET_RPMS)): \
 
 build_test: $(TARGET_SRPM)
 	$${TRAVIS:-false} && echo "travis_fold:start:mock" || true
-	mock $(COMMON_RPMBUILD_ARGS) $<
+	mock -v $(COMMON_RPMBUILD_ARGS) $<
 	$${TRAVIS:-false} && echo "travis_fold:end:mock" || true
 
 # it's not clear yet that we need/want this
