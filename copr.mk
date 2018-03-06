@@ -32,6 +32,7 @@ copr_build iml_copr_build: $(PREREQ)
 	#$(COPR_OWNER)/$(COPR_PROJECT)
 	copr-cli $(COPR_CONFIG) build $(OWNER_PROJECT) $^
 else ifeq ($(BUILD_METHOD),Registry)
+copr_build iml_copr_build: $(PREREQ)
 	copr-cli $(COPR_CONFIG) build $(OWNER_PROJECT) $^
 else
 copr_build iml_copr_build: $(RPM_SPEC)
