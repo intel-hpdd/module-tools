@@ -1,7 +1,16 @@
+PREREQ :=
+
+ifeq ($(DRYRUN),true)
+	ECHO := echo
+else
+	ECHO :=
+endif
+
 ifneq ($(filter iml_%,$(MAKECMDGOALS)),)
   COPR_CONFIG := --config include/copr-mfl
   OWNER_PROJECT = managerforlustre/manager-for-lustre
 else
+  PREREQ += create_copr_project
   # local settings
   -include copr-local.mk
 
