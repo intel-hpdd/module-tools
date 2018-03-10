@@ -1,5 +1,8 @@
 RPM_SPEC      ?= $(NAME).spec
 
+CLEAN += _topdir
+DISTCLEAN += dist
+
 ifndef DIST_VERSION
 DIST_VERSION	     := $(PACKAGE_VERSION)
 else
@@ -43,10 +46,6 @@ genfiles: $(RPM_SPEC)
 
 develop:
 	python setup.py develop
-
-cleandist:
-	rm -rf dist
-	mkdir dist
 
 tarball: dist/$(NAME)-$(PACKAGE_VERSION).tar.gz
 
@@ -101,11 +100,8 @@ rpmlint: $(RPM_SPEC)
 tags:
 	ctags -R .
 
-clean: cleandist
-	rm -rf _topdir
-
-.PHONY: rpms srpm test test_dependencies build_test dist cleandist develop \
-	all clean genfiles setuphooks rpmlint
+.PHONY: rpms srpm test test_dependencies build_test dist develop \
+	all genfiles setuphooks rpmlint
 
 include include/githooks.mk
 
