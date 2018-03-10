@@ -33,7 +33,7 @@ COMMON_RPMBUILD_ARGS += $(RPM_DIST_VERSION_ARG)                       \
 
 RPMBUILD_ARGS += $(COMMON_RPMBUILD_ARGS) --define "_topdir $$(pwd)/_topdir" 
 
-TARGET_SRPM   := _topdir/SRPMS/$(shell set -x; rpm $(RPMBUILD_ARGS) -q             \
+TARGET_SRPM   := _topdir/SRPMS/$(shell rpm $(RPMBUILD_ARGS) -q             \
 				 --qf %{name}-%{version}-%{release}\\n     \
 				 --specfile $(RPM_SPEC) | head -1).src.rpm
 
@@ -61,14 +61,6 @@ _topdir/SPECS/$(RPM_SPEC): $(RPM_SPEC)
 _topdir/SOURCES/%: %
 	mkdir -p _topdir/SOURCES
 	cp $< $@
-
-$(RPM_SOURCES):
-	if ! spectool $(RPM_DIST_VERSION_ARG)                  \
-		   --define "epel 1"                           \
-		   -g $(RPM_SPEC); then                        \
-	    echo "Failed to fetch $@.";                        \
-	    exit 1;                                            \
-	fi
 
 srpm: $(TARGET_SRPM)
 
