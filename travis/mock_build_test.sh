@@ -37,6 +37,9 @@ groupadd --gid "$(stat -c '%g' "$MAPPED_DIR")" mocker
 useradd --uid "$(stat -c '%u' "$MAPPED_DIR")" --gid "$(stat -c '%g' "$MAPPED_DIR")" mocker
 usermod -a -G mock mocker
 
+pushd "$MAPPED_DIR"
+make install_build_deps
+popd
 
 if ! su - mocker <<EOF; then
 set -xe
