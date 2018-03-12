@@ -16,3 +16,11 @@ $(RPM_SPEC): include/python-pypi.mk
 	pyp2rpm $(NAME) | sed -e 's/python3-/python%{python3_pkgversion}-/' \
 			      -e '/%check/,/^$$/d' > $@
 endif
+
+$(RPM_SOURCES):
+	if ! spectool $(RPM_DIST_VERSION_ARG)                  \
+		   --define "epel 1"                           \
+		   -g $(RPM_SPEC); then                        \
+	    echo "Failed to fetch $@.";                        \
+	    exit 1;                                            \
+	fi
