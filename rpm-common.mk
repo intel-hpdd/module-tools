@@ -16,10 +16,6 @@ ALL_PKGS := $(NAME) $(addprefix $(NAME)-,$(SUBPACKAGES))
 
 PACKAGE_VRD   := $(PACKAGE_VERSION)-$(PACKAGE_RELEASE)$(RPM_DIST)
 
-TARGET_RPMS   := $(addprefix _topdir/RPMS/noarch/python-,  \
-                   $(addsuffix -$(PACKAGE_VRD).noarch.rpm, \
-                     $(ALL_PKGS)))
-
 RPM_SOURCES   := $(shell spectool --define version\ $(PACKAGE_VERSION)   \
 		                  $(RPM_DIST_VERSION_ARG)                \
 		                  --define "epel 1"                      \
@@ -34,7 +30,7 @@ COMMON_RPMBUILD_ARGS += $(RPM_DIST_VERSION_ARG)                       \
 			--define "epel 1"                             \
 			--define "%dist $(RPM_DIST)"
 
-RPMBUILD_ARGS += $(COMMON_RPMBUILD_ARGS) --define "_topdir $$(pwd)/_topdir" 
+RPMBUILD_ARGS += $(COMMON_RPMBUILD_ARGS) --define "_topdir $$(pwd)/_topdir"
 
 TARGET_SRPM   := _topdir/SRPMS/$(shell rpm $(RPMBUILD_ARGS) -q             \
 				 --qf %{name}-%{version}-%{release}\\n     \
