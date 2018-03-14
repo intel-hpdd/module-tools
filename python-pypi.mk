@@ -1,7 +1,10 @@
 BUILD_METHOD := PyPI
+include include/common.mk
 include include/python-common.mk
 include include/rpm-common.mk
 include include/copr.mk
+
+DISTCLEAN += $(NAME)-*.tar.gz
 
 # don't rebuild if tracked by git since this has to be manually
 # updated by a developer because pyp2rpm is just not sufficient
