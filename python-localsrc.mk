@@ -3,12 +3,12 @@ BUILD_METHOD := Registry
 include include/git-versioning.mk
 
 ifeq ($(strip $(VERSION)),)
-VERSION         := $(shell set -x; PYTHONPATH=chroma_agent python -c \
+VERSION         := $(shell set -x; PYTHONPATH=$(MODULE_SUBDIR) python -c \
 		     "import scm_version; print scm_version.VERSION")
 endif
 
 ifeq ($(strip $(PACKAGE_VERSION)),)
-PACKAGE_VERSION := $(shell set -x; PYTHONPATH=chroma_agent python -c \
+PACKAGE_VERSION := $(shell set -x; PYTHONPATH=$(MODULE_SUBDIR) python -c \
 		     "import scm_version; print scm_version.PACKAGE_VERSION")
 endif
 
