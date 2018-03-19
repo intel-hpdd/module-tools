@@ -3,6 +3,17 @@ RPM_SPEC      ?= $(NAME).spec
 CLEAN += _topdir
 DISTCLEAN += dist
 
+# I would love nothing more than to build the specfile using the
+# standard %.in rule but we need it to be made before many of the
+# following variable evaluations so we can't leave it to be built
+# during target processing.
+# So we end up having to run this every time.
+$(shell if [ $(RPM_SPEC).in -nt $(RPM_SPEC) ]; then   \
+	    sed -e "s/@VERSION@/$(PACKAGE_VERSION)/g" \
+	        -e "s/@RELEASE@/$(PACKAGE_RELEASE)/g" \
+	        < $(RPM_SPEC).in > $(RPM_SPEC);       \
+	fi)
+
 ifndef DIST_VERSION
 DIST_VERSION	     := $(PACKAGE_VERSION)
 else
@@ -16,13 +27,11 @@ ALL_PKGS := $(NAME) $(addprefix $(NAME)-,$(SUBPACKAGES))
 
 PACKAGE_VRD   := $(PACKAGE_VERSION)-$(PACKAGE_RELEASE)$(RPM_DIST)
 
-RPM_SOURCES   := $(shell spectool --define version\ $(PACKAGE_VERSION)   \
-		                  $(RPM_DIST_VERSION_ARG)                \
-		                  --define "epel 1"                      \
-		                  -l $(RPM_SPEC) |                       \
+RPM_SOURCES   := $(shell spectool --define version\ $(PACKAGE_VERSION) \
+				  $(RPM_DIST_VERSION_ARG)              \
+				  --define "epel 1"                    \
+				  -l $(RPM_SPEC) |                     \
 				  sed -e 's/^[^:]*:  *//' -e 's/.*\///')
-
-MODULE_SUBDIR ?= $(subst -,_,$(NAME))
 
 COMMON_RPMBUILD_ARGS += $(RPM_DIST_VERSION_ARG)                       \
 			--define "version $(PACKAGE_VERSION)"         \
@@ -32,10 +41,9 @@ COMMON_RPMBUILD_ARGS += $(RPM_DIST_VERSION_ARG)                       \
 
 RPMBUILD_ARGS += $(COMMON_RPMBUILD_ARGS) --define "_topdir $$(pwd)/_topdir"
 
-TARGET_SRPM   := _topdir/SRPMS/$(shell rpm $(RPMBUILD_ARGS) -q             \
-				 --qf %{name}-%{version}-%{release}\\n     \
-				 --specfile $(RPM_SPEC) | head -1).src.rpm
-
+TARGET_SRPM   := _topdir/SRPMS/$(shell rpm $(RPMBUILD_ARGS) -q                       \
+				           --qf %{name}-%{version}-%{release}\\n     \
+				           --specfile $(RPM_SPEC) | head -1).src.rpm
 all: rpms
 
 genfiles: $(RPM_SPEC)
