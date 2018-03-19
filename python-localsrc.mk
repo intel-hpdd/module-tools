@@ -12,6 +12,7 @@ PACKAGE_VERSION := $(shell set -x; PYTHONPATH=$(MODULE_SUBDIR) python -c \
 		     "import scm_version; print scm_version.PACKAGE_VERSION")
 endif
 
+include include/common.mk
 include include/python-common.mk
 include include/rpm-common.mk
 include include/copr.mk
