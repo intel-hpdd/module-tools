@@ -22,7 +22,7 @@ ifneq ($(DIST_VERSION),$(PACKAGE_VERSION))
     $(shell rm -f $(RPM_SOURCES))
 endif
 
-%.egg-info/SOURCES.txt:
+%.egg-info/SOURCES.txt: install_build_deps-stamp
 	python setup.py egg_info
 
 deps: $(subst -,_,$(NAME)).egg-info/SOURCES.txt
@@ -72,8 +72,12 @@ _topdir/SOURCES/%: %
 	mkdir -p _topdir/SOURCES
 	cp $< $@
 
-install_build_deps:
-	yum -y install python-setuptools
+install_build_deps: install_build_deps-stamp
+
+install_build_deps-stamp:
+	if ! rpm -q python-setuptools; then   \
+	    yum -y install python-setuptools; \
+	fi
+	touch $@
 
 include deps
-
