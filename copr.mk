@@ -1,7 +1,11 @@
 PREREQ :=
 
+# default to failsafe
+DRYRUN := true
 ifeq ($(DRYRUN),true)
 	ECHO := echo
+$(warning Not actually executing commands.  \
+Pass DRYRUN=false to make to execute commands.)
 else
 	ECHO :=
 endif
@@ -10,10 +14,13 @@ ifneq ($(filter iml_%,$(MAKECMDGOALS)),)
   COPR_CONFIG := --config include/copr-mfl
   OWNER_PROJECT = managerforlustre/manager-for-lustre
 else
-  PREREQ += create_copr_project
   # local settings
   -include copr-local.mk
 
+  ifeq ($(COPR_PROJECT),)
+    PREREQ += create_copr_project
+    COPR_PROJECT := $(NAME)
+  endif
   ifneq ($(filter copr_%,$(MAKECMDGOALS)),)
     ifndef COPR_OWNER
       $(error COPR_OWNER needs to be set in copr-local.mk)
@@ -28,8 +35,13 @@ endif
 ifeq ($(shell grep -q ^%patch $(RPM_SPEC); echo $${PIPESTATUS[0]}),0)
   PREREQ += $(TARGET_SRPM)
 else
-  PREREQ += $(RPM_SPEC)
+  ifeq ($(UNPUBLISHED),true)
+    PREREQ += $(TARGET_SRPM)
+  else
+    PREREQ += $(RPM_SPEC)
+  endif
 endif
+
 
 delete_copr_project:
 	if copr-cli list | grep $(NAME); then                     \
