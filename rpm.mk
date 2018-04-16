@@ -26,6 +26,13 @@ $(RPM_SOURCES):
 	fi
 
 install_build_deps:
-	echo "Nothing to do"
+	if [ "$(REPO)" = "epel" ]; then                                                     \
+	    if ! rpm -q epel-release; then                                                  \
+	        yum -y install                                                              \
+	            https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm; \
+	    fi;                                                                             \
+	else                                                                                \
+	    echo "Nothing to do";                                                           \
+	fi
 
 .PHONY: unpack download install_build_deps
