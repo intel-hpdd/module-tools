@@ -44,8 +44,8 @@ endif
 
 
 delete_copr_project:
-	if copr-cli list | grep $(NAME); then                     \
-	    $(ECHO) copr-cli $(COPR_CONFIG) delete $(NAME);               \
+	if copr-cli list | grep $(NAME); then               \
+	    $(ECHO) copr-cli $(COPR_CONFIG) delete $(NAME); \
 	fi
 
 create_copr_project: delete_copr_project
@@ -62,15 +62,15 @@ copr_build iml_copr_build: $(PREREQ)
 	#$(COPR_OWNER)/$(COPR_PROJECT)
 	$(ECHO) copr-cli $(COPR_CONFIG) build $(OWNER_PROJECT) $(filter-out \
 		create_copr_project,$^)
-else ifeq ($(BUILD_METHOD),Registry)
-copr_build iml_copr_build: $(PREREQ)
-	$(ECHO) copr-cli $(COPR_CONFIG) build $(OWNER_PROJECT) $(filter-out \
-		create_copr_project,$^)
-else
+else ifeq ($(BUILD_METHOD),SCM)
 copr_build iml_copr_build: $(PREREQ)
 	$(ECHO) copr-cli $(COPR_CONFIG) buildmock $(OWNER_PROJECT)       \
 		 --scm-type git                                  \
 		 --scm-url https://github.com/intel-hpdd/$(NAME)
+else
+copr_build iml_copr_build: $(PREREQ)
+	$(ECHO) copr-cli $(COPR_CONFIG) build $(OWNER_PROJECT) $(filter-out \
+		create_copr_project,$^)
 endif
 
 .PHONY: copr_build iml_copr_build
